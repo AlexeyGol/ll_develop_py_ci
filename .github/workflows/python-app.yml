@@ -15,15 +15,24 @@ permissions:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        runs: [ubuntu-latest, macos-latest, windows-latest]
+        py_version: [3.7, 3.8, 3.9, 3.10]
+        include:
+          - runs: [ubuntu-latest]
+            py_version: [3.6]
+        exclude:
+          - runs: [windows-latest]
+            py_version: [3.10]
 
-    runs-on: ubuntu-latest
-
+    runs-on: ${{ matrix.runs}}
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
-        python-version: "3.10"
+        python-version: ${{ matrix.py_version }}
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
